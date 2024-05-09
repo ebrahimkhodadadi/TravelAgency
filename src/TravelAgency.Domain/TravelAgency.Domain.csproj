@@ -14,9 +14,7 @@
 
   <ItemGroup>
     <Folder Include="Billing\DataProcessing\" />
-    <Folder Include="Billing\Enumerations\" />
-    <Folder Include="Billing\Errors\" />
-    <Folder Include="Billing\ValueObjects\" />
+    <Folder Include="Billing\Repositories\" />
   </ItemGroup>
 
 </Project>
