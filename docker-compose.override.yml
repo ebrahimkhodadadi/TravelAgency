@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  TravelAgencydb:
+    container_name: TravelAgencydb
+    environment:
+      - SA_PASSWORD=a123Aa123A
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+    restart: always
+    networks:
+      - db_net
+    ports:
+      - "1433:1433"
+    volumes:
+      - TravelAgency_volume:/var/opt/mssql
+
+  redis:
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - db_net
+    ports:
+      - "6379:6379"
+
+  TravelAgency.app:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__CacheConnection=redis
+      - "ConnectionStrings__DefaultConnection=Server=TravelAgencydb;Database=TravelAgencyDB;User Id=sa;Password=a123Aa123A;TrustServerCertificate=True;"
+      - "ConnectionStrings__TestConnection=Server=TravelAgencydb;Database=TravelAgencyTest;User Id=sa;Password=a123Aa123A;TrustServerCertificate=True;"
+      - "ASPNETCORE_HTTP_PORTS=80;8080"
+    restart: unless-stopped
+    networks:
+      - db_net
+    depends_on:
+      - TravelAgencydb
+    ports:
+      - "8080:80"

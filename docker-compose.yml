@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  TravelAgencydb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    
+  redis:
+    image: redis
+
+  TravelAgency.app:
+    image: ${DOCKER_REGISTRY-}TravelAgency
+    build:
+      context: .
+      dockerfile: src/TravelAgency.App/Dockerfile
+
+networks:
+  db_net:
+
+volumes:
+  TravelAgency_volume:
