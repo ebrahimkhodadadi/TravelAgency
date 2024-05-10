@@ -26,7 +26,7 @@ internal sealed class BillConfiguration : IEntityTypeConfiguration<Bill>
             .HasColumnType(ColumnType.Char(UlidCharLenght));
 
         builder.Property(c => c.Status)
-            .HasConversion<RankConverter>()
+            .HasConversion<BillStatusConverter>()
             .HasColumnName(nameof(BillStatus))
             .HasDefaultValue(BillStatus.InProgress)
             .HasColumnType(ColumnType.VarChar(LongestOf<BillStatus>()));
