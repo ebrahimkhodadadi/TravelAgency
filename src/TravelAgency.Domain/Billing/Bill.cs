@@ -6,6 +6,10 @@ using TravelAgency.Domain.Users;
 using static TravelAgency.Domain.Billing.Errors.DomainErrors.BillStatus;
 using static TravelAgency.Domain.Billing.Enumerations.BillStatus;
 using static TravelAgency.Domain.Users.Enumerations.Rank;
+using static TravelAgency.Domain.Common.Utilities.ListUtilities;
+using TravelAgency.Domain.Common.Errors;
+using TravelAgency.Domain.Billing.ValueObjects;
+using TravelAgency.Domain.Billing.Services;
 
 namespace TravelAgency.Domain.Billing;
 
@@ -20,7 +24,10 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
     public IReadOnlyCollection<Travel> Travels => _travels.AsReadOnly();
 
     private readonly List<Payment> _payments = [];
-    public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
+    public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();    
+    
+    private readonly List<DiscountLog> _discounts = [];
+    public IReadOnlyCollection<DiscountLog> Discounts => _discounts.AsReadOnly();
 
     public CustomerId CustomerId { get; private set; }
     public Customer Customer { get; private set; }
@@ -32,10 +39,6 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
     public DateTimeOffset? UpdatedOn { get; set; }
     public string CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
-
-    public Bill()
-    {
-    }
 
     private Bill(
         BillId id,
@@ -67,6 +70,23 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
     {
         SoftDeleted = true;
         SoftDeletedOn = DateTimeOffset.UtcNow;
+    }
+
+    // پرداخت
+    public Result Pay(Money price)
+    {
+        if (Status is Closed || Status is Canceled)
+            return Result.Failure(Errors.DomainErrors.BillStatus.BillClosed);
+
+        var fee = CreditService.CalculateCreditUsageFee(Customer, CreatedOn.Date, Payments.ToList());
+        var discount = DiscountService.CalculateGoodPayerDiscount(Payments.ToList());
+        if (discount.IsValueZero())
+            _discounts.Add(DiscountLog.Create(Id, discount));
+        var totalPrice = price + fee - discount;
+
+        _payments.Add(Payment.Create(totalPrice, Id, "پرداخت"));
+
+        return Result.Success();
     }
 
     // بستن صورت حساب
