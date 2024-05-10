@@ -45,7 +45,6 @@ internal sealed class CustomerEntityTypeConfiguration : IEntityTypeConfiguration
         builder.Property(c => c.Rank)
             .HasConversion<RankConverter>()
             .HasColumnName(nameof(Rank))
-            .HasDefaultValue(Rank.Standard)
             .HasColumnType(ColumnType.VarChar(LongestOf<Rank>()));
 
         builder.ConfigureAuditableEntity();

@@ -5,11 +5,10 @@ public static partial class Constants
     internal static class TableName
     {
         internal const string Address = nameof(Address);
+        internal const string Bill = nameof(Bill);
         internal const string Customer = nameof(Customer);
-        internal const string OrderHeader = nameof(OrderHeader);
-        internal const string OrderLine = nameof(OrderLine);
         internal const string Payment = nameof(Payment);
-        internal const string Product = nameof(Product);
+        internal const string Travel = nameof(Travel);
         internal const string Review = nameof(Review);
         internal const string Role = nameof(Role);
         internal const string RoleUser = nameof(RoleUser);

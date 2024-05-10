@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelAgency.Domain.Users.Enumerations;
 
-namespace TravelAgency.Persistence.Converters.EntityIds;
+namespace TravelAgency.Persistence.Converters.Enums;
 
 public sealed class RankConverter : ValueConverter<Rank, string>
 {

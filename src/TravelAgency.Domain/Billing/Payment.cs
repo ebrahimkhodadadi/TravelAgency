@@ -9,7 +9,7 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
 {
     public Money Price { get; private set; }
     public BillId BillId { get; private set; }
-    public PaymentId TransferId { get; private set; }
+    public PaymentId? TransferId { get; private set; }
     public TravelId? TravelId { get; private set; }
     public PaymentType PaymentType { get; private set; }
     public string Description { get; private set; }
