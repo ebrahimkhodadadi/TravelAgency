@@ -9,6 +9,7 @@ public static partial class Constants
         internal const string Customer = nameof(Customer);
         internal const string Payment = nameof(Payment);
         internal const string Travel = nameof(Travel);
+        internal const string DiscountLog = nameof(DiscountLog);
         internal const string Review = nameof(Review);
         internal const string Role = nameof(Role);
         internal const string RoleUser = nameof(RoleUser);

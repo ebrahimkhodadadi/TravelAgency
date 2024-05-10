@@ -13,30 +13,20 @@ using static TravelAgency.Persistence.Constants.Constants.Number;
 
 namespace TravelAgency.Persistence.Configurations;
 
-internal sealed class BillConfiguration : IEntityTypeConfiguration<Bill>
+internal sealed class DiscountLogConfiguration : IEntityTypeConfiguration<DiscountLog>
 {
-    public void Configure(EntityTypeBuilder<Bill> builder)
+    public void Configure(EntityTypeBuilder<DiscountLog> builder)
     {
-        builder.ToTable(TableName.Bill, SchemaName.TravelAgency);
+        builder.ToTable(TableName.DiscountLog, SchemaName.TravelAgency);
 
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Id)
-            .HasConversion<BillIdConverter, BillIdComparer>()
+            .HasConversion<TravelIdConverter, TravelIdComparer>()
             .HasColumnType(ColumnType.Char(UlidCharLenght));
 
-        builder.Property(c => c.Status)
-            .HasConversion<BillStatusConverter>()
-            .HasColumnName(nameof(BillStatus))
-            .HasDefaultValue(BillStatus.InProgress)
-            .HasColumnType(ColumnType.VarChar(LongestOf<BillStatus>()));
-
-        builder.Property(p => p.CustomerId)
-            .HasConversion<CustomerIdConverter, CustomerIdComparer>()
-            .HasColumnType(ColumnType.Char(UlidCharLenght));
-
-        builder
-            .ConfigureAuditableEntity()
-            .ConfigureSoftDeletableEntity();
+        builder.Property(p => p.Price)
+            .HasConversion<MoneyConverter, MoneyComparer>()
+            .HasColumnName("Price");
     }
 }
