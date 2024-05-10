@@ -4,7 +4,7 @@ using TravelAgency.Domain.Common.BaseTypes.Abstractions;
 
 namespace TravelAgency.Domain.Billing;
 
-public sealed class DiscountLog : Entity<DiscountId>, IAuditable
+public sealed class DiscountLog : Entity<DiscountLogId>, IAuditable
 {
     public BillId BillId { get; private set; }
     public Money Price { get; private set; }
@@ -15,7 +15,7 @@ public sealed class DiscountLog : Entity<DiscountId>, IAuditable
     public string? UpdatedBy { get; set; }
 
     private DiscountLog(
-        DiscountId id,
+        DiscountLogId id,
         BillId billId,
         Money price
         )
@@ -33,7 +33,7 @@ public sealed class DiscountLog : Entity<DiscountId>, IAuditable
     {
         var bill = new DiscountLog
         (
-            id: DiscountId.New(),
+            id: DiscountLogId.New(),
             billId: billId,
             price: price
         );

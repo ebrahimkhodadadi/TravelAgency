@@ -22,7 +22,7 @@ internal sealed class DiscountLogConfiguration : IEntityTypeConfiguration<Discou
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.Id)
-            .HasConversion<TravelIdConverter, TravelIdComparer>()
+            .HasConversion<DiscountLogIdConverter, DiscountLogIdComparer>()
             .HasColumnType(ColumnType.Char(UlidCharLenght));
 
         builder.Property(p => p.Price)

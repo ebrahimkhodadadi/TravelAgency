@@ -2,23 +2,23 @@
 
 namespace TravelAgency.Domain.Billing
 {
-    public readonly record struct DiscountId : IEntityId<DiscountId>
+    public readonly record struct DiscountLogId : IEntityId<DiscountLogId>
     {
-        private DiscountId(Ulid id)
+        private DiscountLogId(Ulid id)
         {
             Value = id;
         }
 
         public Ulid Value { get; }
 
-        public static DiscountId New()
+        public static DiscountLogId New()
         {
-            return new DiscountId(Ulid.NewUlid());
+            return new DiscountLogId(Ulid.NewUlid());
         }
 
-        public static DiscountId Create(Ulid id)
+        public static DiscountLogId Create(Ulid id)
         {
-            return new DiscountId(id);
+            return new DiscountLogId(id);
         }
 
         public override int GetHashCode()
@@ -46,9 +46,9 @@ namespace TravelAgency.Domain.Billing
             return Value.CompareTo(otherBillId.Value);
         }
 
-        public static bool operator >(DiscountId a, DiscountId b) => a.CompareTo(b) is 1;
-        public static bool operator <(DiscountId a, DiscountId b) => a.CompareTo(b) is -1;
-        public static bool operator >=(DiscountId a, DiscountId b) => a.CompareTo(b) >= 0;
-        public static bool operator <=(DiscountId a, DiscountId b) => a.CompareTo(b) <= 0;
+        public static bool operator >(DiscountLogId a, DiscountLogId b) => a.CompareTo(b) is 1;
+        public static bool operator <(DiscountLogId a, DiscountLogId b) => a.CompareTo(b) is -1;
+        public static bool operator >=(DiscountLogId a, DiscountLogId b) => a.CompareTo(b) >= 0;
+        public static bool operator <=(DiscountLogId a, DiscountLogId b) => a.CompareTo(b) <= 0;
     }
 }
