@@ -10,6 +10,7 @@ using static TravelAgency.Domain.Common.Utilities.ListUtilities;
 using TravelAgency.Domain.Common.Errors;
 using TravelAgency.Domain.Billing.ValueObjects;
 using TravelAgency.Domain.Billing.Services;
+using TravelAgency.Domain.Billing.Repositories;
 
 namespace TravelAgency.Domain.Billing;
 
@@ -141,7 +142,7 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         return Result.Success();
     }
 
-    public Result TransferPayment(Payment from, Payment to, IBillRepository _billRepository)
+    public async Task<Result> TransferPayment(Payment from, Payment to, IBillRepository _billRepository)
     {
         if (-from.Price.Value != to.Price.Value && -to.Price.Value != from.Price.Value)
             return Result.Failure(Errors.DomainErrors.Price.MustNotEquelForCheque);
@@ -150,7 +151,7 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         to.SetTransferId(from.Id);
 
         _payments.Add(from);
-        var toBill = _billRepository.FindById(to.BillId);
+        var toBill = await _billRepository.GetByIdAsync(to.BillId);
         var result = toBill.CreatePayment(to);
         if (result.IsFailure)
             return result;

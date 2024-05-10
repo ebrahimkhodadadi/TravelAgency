@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Billing\DataProcessing\" />
-    <Folder Include="Billing\Repositories\" />
   </ItemGroup>
 
 </Project>
