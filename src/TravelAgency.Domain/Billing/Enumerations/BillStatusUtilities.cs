@@ -1,5 +1,5 @@
 ﻿using static TravelAgency.Domain.Billing.Enumerations.BillStatus;
-using static TravelAgency.Domain.Billing.Constants.Bill;
+using static TravelAgency.Domain.Billing.Enumerations.Constants.Bill;
 
 namespace TravelAgency.Domain.Billing.Enumerations;
 

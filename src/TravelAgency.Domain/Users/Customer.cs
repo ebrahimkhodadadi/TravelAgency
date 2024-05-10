@@ -40,6 +40,7 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
     public LastName LastName { get; private set; }
     public Gender Gender { get; private set; }
     public Rank Rank { get; private set; }
+    public DebtLimit DebtLimit { get; private set; }
 
     //DateOnly property needs a conversion to SQL Server DATE format
     public DateOnly? DateOfBirth { get; private set; }

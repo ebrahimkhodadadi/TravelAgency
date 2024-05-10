@@ -1,7 +1,6 @@
-﻿using TravelAgency.Domain.Billing.Enumerations;
-using static TravelAgency.Domain.Billing.Enumerations.BillStatus;
+﻿using static TravelAgency.Domain.Billing.Enumerations.BillStatus;
 
-namespace TravelAgency.Domain.Billing;
+namespace TravelAgency.Domain.Billing.Enumerations;
 
 public static partial class Constants
 {

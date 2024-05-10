@@ -2,7 +2,6 @@
 
 public enum Rank
 {
-    Standard,
-    Premium,
-    VIP
+    Credit = 1, // اعتباری
+    Cash = 2 // نقدی
 }

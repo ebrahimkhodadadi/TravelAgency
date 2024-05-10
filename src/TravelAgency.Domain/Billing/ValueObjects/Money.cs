@@ -23,8 +23,8 @@ public sealed class Money : ValueObject
 
     public static IList<Error> Validate(int amount)
     {
-        return EmptyList<Error>()
-            .If(amount < MinAmount, AmountError.TooLow);
+        return EmptyList<Error>();
+            //.If(amount < MinAmount, AmountError.TooLow);
     }
 
     public override IEnumerable<object> GetAtomicValues()
@@ -88,5 +88,5 @@ public sealed class Money : ValueObject
     public bool IsValueZero() =>
         Value <= 0;
 
-    public override string ToString() => Value.ToString();
+    public override string ToString() => "تومان " + Value.ToString("N0");
 }

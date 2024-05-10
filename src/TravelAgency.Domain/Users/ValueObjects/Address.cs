@@ -16,7 +16,7 @@ public sealed class Address : ValueObject
     public const int MaxBuildingNumber = 1000;
     public const int MinFlatNumber = 1;
     public const int MinBuildingNumber = 1;
-    public static readonly string[] AvailableCountries = ["Poland", "Germany", "England", "Russia"];
+    public static readonly string[] AvailableCountries = ["Iran"];
     private static readonly Regex _zipCodeRegex = new(@"^\d{5}?$", Compiled | CultureInvariant | Singleline, TimeSpan.FromMilliseconds(100));
 
     public string City { get; }
