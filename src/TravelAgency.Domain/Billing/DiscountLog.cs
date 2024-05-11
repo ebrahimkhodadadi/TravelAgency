@@ -14,6 +14,10 @@ public sealed class DiscountLog : Entity<DiscountLogId>, IAuditable
     public string CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
 
+    private DiscountLog()
+    {    
+    }
+
     private DiscountLog(
         DiscountLogId id,
         BillId billId,

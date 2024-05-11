@@ -10,7 +10,6 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
     public Money Price { get; private set; }
     public BillId BillId { get; private set; }
     public PaymentId? TransferId { get; private set; }
-    public TravelId? TravelId { get; private set; }
     public PaymentType PaymentType { get; private set; }
     public string Description { get; private set; }
 
@@ -29,26 +28,23 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
         PaymentId id,
         Money price,
         BillId billId,
-        string description = null,
-        TravelId? travelId = null
+        string description = null
         )
     : base(id)
     {
         Price = price;
         BillId = billId;
-        TravelId = travelId;
         Description = description;
     }
 
-    public static Payment Create(Money price, BillId billId, string description = null, TravelId? travelId = null)
+    public static Payment Create(Money price, BillId billId, string description = null)
     {
         return new Payment
         (
             id: PaymentId.New(),
             price: price,
             billId: billId,
-            description: description,
-            travelId: travelId
+            description: description
         );
     }
 

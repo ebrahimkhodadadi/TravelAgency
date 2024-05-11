@@ -38,7 +38,7 @@ public sealed class Travel : Entity<TravelId>, IAuditable
         var fee = CalculateCancellationFee(Type, Start, Price);
         if (fee.IsFailure)
             return fee;
-        _payments.Add(Payment.Create(-fee.Value.Value, BillId, "جریمه کنسلی", Id));
+        _payments.Add(Payment.Create(-fee.Value.Value, BillId, "جریمه کنسلی"));
 
         return Result.Success();
     }

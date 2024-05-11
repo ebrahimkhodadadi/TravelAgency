@@ -8,7 +8,7 @@ public static partial class Constants
         internal const int DecimalScale = 2;
         internal const int DiscountPrecision = 3;
         internal const int DiscountScale = 2;
-        internal const int PhoneNumberMaxLenght = 9;
+        internal const int PhoneNumberMaxLenght = 15;
         internal const int UlidCharLenght = 26;
     }
 }

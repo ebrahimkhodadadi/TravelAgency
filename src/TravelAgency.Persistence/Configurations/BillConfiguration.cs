@@ -38,5 +38,17 @@ internal sealed class BillConfiguration : IEntityTypeConfiguration<Bill>
         builder
             .ConfigureAuditableEntity()
             .ConfigureSoftDeletableEntity();
+
+        builder.HasMany(p => p.Payments)
+            .WithOne()
+            .HasForeignKey(payment => payment.BillId);     
+        
+        builder.HasMany(p => p.Discounts)
+            .WithOne()
+            .HasForeignKey(discountLog => discountLog.BillId);    
+        
+        builder.HasMany(p => p.Travels)
+            .WithOne()
+            .HasForeignKey(travel => travel.BillId);
     }
 }

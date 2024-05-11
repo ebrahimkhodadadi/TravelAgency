@@ -119,6 +119,11 @@ internal sealed class CustomerEntityTypeConfiguration : IEntityTypeConfiguration
                     .HasMaxLength(Address.MaxFlatNumber);
             });
 
+        builder.OwnsOne(o => o.DebtLimit, options =>
+        {
+            options.Property(p => p.Value).HasColumnName(nameof(DebtLimit));
+        });
+
         builder.HasOne(c => c.User)
             .WithOne(u => u.Customer)
             .HasForeignKey<Customer>(c => c.UserId);
