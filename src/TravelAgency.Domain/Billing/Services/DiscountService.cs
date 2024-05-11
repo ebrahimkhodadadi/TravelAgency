@@ -5,47 +5,30 @@ namespace TravelAgency.Domain.Billing.Services
     public static class DiscountService
     {
         // تخفیف خوش حسابی
-        public static Money CalculateGoodPayerDiscount(List<Payment> payments)
+        public static Money CalculateGoodPayerDiscount(Dictionary<DateTime, Money> purchaseList, Money totalPurchases)
         {
-            DateTime endDate = DateTimeOffset.UtcNow.Date;
-            DateTime startDate = endDate.AddDays(-29);
-
-            List<Payment> paymentsIn30Days = payments
-                .Where(p => p.CreatedOn >= startDate && p.CreatedOn <= endDate)
-                .ToList();
-
-            bool isGoodPayer = IsGoodPayer(paymentsIn30Days, startDate, endDate);
+            bool isGoodPayer = IsGoodPayer(purchaseList);
 
             Money goodPayerDiscount = 0;
             if (isGoodPayer)
             {
-                Money totalPurchases = CalculateTotalPurchases(paymentsIn30Days);
                 goodPayerDiscount = (int)Math.Round(totalPurchases.Value * 0.01m);
             }
 
             return goodPayerDiscount;
         }
 
-        private static bool IsGoodPayer(List<Payment> payments, DateTime startDate, DateTime endDate)
+        private static bool IsGoodPayer(Dictionary<DateTime, Money> purchaseList)
         {
-            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            foreach (var avg in purchaseList)
             {
-                Money averageDailyBalance = CreditService.CalculateAverageDailyBalance(date, date.AddDays(9), payments);
-
-                if (averageDailyBalance >= 0)
+                if (avg.Value.IsValueZero())
                 {
                     return false;
                 }
             }
 
             return true;
-        }
-
-        private static Money CalculateTotalPurchases(List<Payment> payments)
-        {
-            Money totalPurchases = payments.Sum(p => p.Price.Value);
-
-            return totalPurchases;
         }
     }
 }

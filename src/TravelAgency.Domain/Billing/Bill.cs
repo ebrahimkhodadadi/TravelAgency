@@ -19,14 +19,15 @@ namespace TravelAgency.Domain.Billing;
 /// </summary>
 public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
 {
+    //public Money Balance { get { return _payments.Sum(x => x.Price.Value) + _travels.Sum(x => x.Price.Value); } }
     public BillStatus Status { get; private set; }
 
     private readonly List<Travel> _travels = [];
     public IReadOnlyCollection<Travel> Travels => _travels.AsReadOnly();
 
     private readonly List<Payment> _payments = [];
-    public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();    
-    
+    public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
+
     private readonly List<DiscountLog> _discounts = [];
     public IReadOnlyCollection<DiscountLog> Discounts => _discounts.AsReadOnly();
 
@@ -79,15 +80,61 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         if (Status is Closed || Status is Canceled)
             return Result.Failure(Errors.DomainErrors.BillStatus.BillClosed);
 
-        var fee = CreditService.CalculateCreditUsageFee(Customer, CreatedOn.Date, Payments.ToList());
-        var discount = DiscountService.CalculateGoodPayerDiscount(Payments.ToList());
+        var fee = CreditService.CalculateCreditUsageFee(Customer.Rank,
+            CalculateDailyBalance(DateTime.Now.AddDays(-10), DateTime.Now).Item3);
+
+        var dailyBalance = CalculateDailyBalance(DateTime.Now.AddDays(-30), DateTime.Now);
+        var discount = DiscountService.CalculateGoodPayerDiscount(dailyBalance.Item1, dailyBalance.Item2);
         if (discount.IsValueZero())
             _discounts.Add(DiscountLog.Create(Id, discount));
+
         var totalPrice = price + fee - discount;
 
         _payments.Add(Payment.Create(totalPrice, Id, "پرداخت"));
 
         return Result.Success();
+    }
+
+    // محاسبه بالانس روزانه
+    internal (Dictionary<DateTime, Money>, Money, Money) CalculateDailyBalance(DateTime billStartDate, DateTime billEndDate)
+    {
+        List<Payment> transactions = Payments
+            .Where(t => t.CreatedOn >= billStartDate && t.CreatedOn <= billEndDate)
+            .OrderBy(t => t.CreatedOn)
+            .ToList();
+        List<Travel> travels = Travels
+            .Where(t => t.CreatedOn >= billStartDate && t.CreatedOn <= billEndDate)
+            .OrderBy(t => t.CreatedOn)
+            .ToList();
+
+        Dictionary<DateTime, Money> dailyBalances = new Dictionary<DateTime, Money>();
+        foreach (Payment transaction in transactions)
+        {
+            DateTime transactionDate = transaction.CreatedOn.DateTime;
+            Money dailyBalance = transaction.Price;
+
+            if (dailyBalances.ContainsKey(transactionDate))
+            {
+                dailyBalances[transactionDate] += dailyBalance;
+            }
+            else
+            {
+                dailyBalances[transactionDate] = dailyBalance;
+            }
+        }
+        foreach (Travel travel in travels)
+        {
+            DateTime transactionDate = travel.CreatedOn.DateTime;
+            Money dailyBalance = travel.Price;
+
+            dailyBalances[transactionDate] -= dailyBalance;
+        }
+
+        Money totalBalance = dailyBalances.Sum(kv => kv.Value.Value);
+        int numberOfDays = (int)(billEndDate - billStartDate).TotalDays + 1;
+        Money averageDailyBalance = totalBalance / numberOfDays;
+
+        return (dailyBalances, totalBalance, averageDailyBalance);
     }
 
     // بستن صورت حساب

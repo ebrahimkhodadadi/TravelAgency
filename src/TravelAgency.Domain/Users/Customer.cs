@@ -17,7 +17,8 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
         PhoneNumber contactNumber,
         Address? address,
         User user,
-        Rank rank
+        Rank rank,
+        DebtLimit debtLimit
     )
         : base(id)
     {
@@ -29,9 +30,9 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
         PhoneNumber = contactNumber;
         Address = address;
         User = user;
+        DebtLimit = debtLimit;
     }
 
-    // Empty constructor in this case is required by EF Core
     private Customer()
     {
     }
@@ -42,7 +43,6 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
     public Rank Rank { get; private set; }
     public DebtLimit DebtLimit { get; private set; }
 
-    //DateOnly property needs a conversion to SQL Server DATE format
     public DateOnly? DateOfBirth { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
     public Address? Address { get; private set; }
@@ -58,12 +58,14 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
         CustomerId id,
         FirstName firstName,
         LastName lastName,
+        Email email,
         Gender gender,
         DateOnly? dateOfBirth,
         PhoneNumber contactNumber,
         Address? address,
         User user,
-        Rank rank
+        Rank rank,
+        DebtLimit debtLimit
     )
     {
         return new Customer
@@ -75,8 +77,9 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
             dateOfBirth,
             contactNumber,
             address,
-            user,
-            rank
+            User.Create(UserId.New(), Username.Create(email.Value).Value, email),
+            rank,
+            debtLimit
         );
     }
 }
