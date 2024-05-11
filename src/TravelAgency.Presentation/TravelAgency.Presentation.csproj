@@ -28,4 +28,8 @@
     <ProjectReference Include="..\TravelAgency.Application\TravelAgency.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="MediatR"/>
+  </ItemGroup>
+  
 </Project>

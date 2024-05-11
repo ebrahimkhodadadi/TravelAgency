@@ -23,9 +23,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Features\Travel\Commands\" />
-	  <Folder Include="Features\Travel\Events\" />
-	  <Folder Include="Features\Travel\Queries\" />
+	  <Folder Include="Features\Travels\Commands\" />
+	  <Folder Include="Features\Travels\Events\" />
+	  <Folder Include="Features\Travels\Queries\" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <Using Include="TravelAgency.Application.Abstractions" />
+    <Using Include="TravelAgency.Domain.Common.Results.Abstractions" />
+  </ItemGroup>
 
 </Project>

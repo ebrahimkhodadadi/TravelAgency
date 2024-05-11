@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TravelAgency.Domain.Billing;
 using TravelAgency.Domain.Billing.Repositories;
+using TravelAgency.Domain.Users;
 using TravelAgency.Persistence.Framework;
 using TravelAgency.Persistence.Specifications;
 using TravelAgency.Persistence.Specifications.Bills;
@@ -20,5 +21,10 @@ namespace TravelAgency.Persistence.Repositories
                 .UseSpecification(specification)
                 .FirstAsync(cancellationToken);
         }
+
+        public void Add(Bill bill) =>
+        _dbContext
+            .Set<Bill>()
+            .Add(bill);
     }
 }

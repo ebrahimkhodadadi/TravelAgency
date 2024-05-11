@@ -1,20 +1,19 @@
-﻿using MediatR;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TravelAgency.Application.Features.Bills.Commands.Create;
 using TravelAgency.Presentation.Abstractions;
-using TravelAgency.Application.Features.Customers.Commands.Create;
 
 namespace TravelAgency.Presentation.Controllers;
 
-public sealed class CustomerController(ISender sender) : ApiController(sender)
+public sealed class BillController(ISender sender) : ApiController(sender)
 {
     [HttpPost]
-    [ProducesResponseType<CreateCustomerResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<CreateBillResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
-    public async Task<Results<Ok<CreateCustomerResponse>, ProblemHttpResult>> CreateCustomer
+    public async Task<Results<Ok<CreateBillResponse>, ProblemHttpResult>> CreateBill
         (
-        [FromBody] CreateCustomerCommand command, 
+        [FromBody] CreateBillCommand command,
         CancellationToken cancellationToken
         )
     {
