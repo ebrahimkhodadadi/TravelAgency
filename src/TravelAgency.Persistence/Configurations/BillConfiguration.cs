@@ -35,6 +35,8 @@ internal sealed class BillConfiguration : IEntityTypeConfiguration<Bill>
             .HasConversion<CustomerIdConverter, CustomerIdComparer>()
             .HasColumnType(ColumnType.Char(UlidCharLenght));
 
+        builder.Ignore(p => p.Balance);
+
         builder
             .ConfigureAuditableEntity()
             .ConfigureSoftDeletableEntity();

@@ -15,6 +15,7 @@ internal static class RepositoriesRegistration
 
         services.AddScoped<IBillRepository, BillRepository>();
         services.AddScoped<ICustomerRepository, CustomerRespository>();
+        services.AddScoped<ITravelRepository, TravelRepository>();
 
         services.AddScoped<IOutboxRepository, OutboxRepository>();
         services.AddScoped<IUserRepository, UserRepository>();

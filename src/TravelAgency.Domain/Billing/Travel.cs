@@ -28,6 +28,38 @@ public sealed class Travel : Entity<TravelId>, IAuditable
     private readonly List<Payment> _payments = [];
     public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
+    private Travel()
+    {
+    }
+
+    private Travel(TravelId id, Direction direction, DateTimeOffset start, TravelType type, Money price, BillId billId) : base(id)
+    {
+        Direction = direction;
+        Start = start;
+        Type = type;
+        BillId = billId;
+        Price = price;
+    }
+    public static Travel Create
+    (
+        Direction direction,
+        DateTimeOffset start,
+        TravelType type,
+        Money price,
+        BillId billId
+    )
+    {
+        return new Travel
+        (
+            TravelId.New(),
+            direction,
+            start,
+            type,
+            price,
+            billId
+        );
+    }
+
     public Result Cancel()
     {
         var errors = EmptyList<Error>()
@@ -69,7 +101,7 @@ public sealed class Travel : Entity<TravelId>, IAuditable
             if (departureTime >= DateTime.Now.AddHours(2))
                 cancellationFeePercentage = 0.1m;
             // بعد از آن با ۵۰ درصد جریمه قابل کنسل خواهند بود
-            else if(type != Train)
+            else if (type != Train)
                 cancellationFeePercentage = 0.5m;
             else
                 return Result.Failure<Money>(Errors.DomainErrors.TravelStatus.CancelTrain);

@@ -19,7 +19,7 @@ namespace TravelAgency.Domain.Billing;
 /// </summary>
 public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
 {
-    //public Money Balance { get { return _payments.Sum(x => x.Price.Value) + _travels.Sum(x => x.Price.Value); } }
+    public Money Balance { get { return _payments.Sum(x => x.Price.Value) - _travels.Sum(x => x.Price.Value); } }
     public BillStatus Status { get; private set; }
 
     private readonly List<Travel> _travels = [];
@@ -150,13 +150,12 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         return Result.Success();
     }
 
-    public Result CreateTravel(Travel travel, Payment? payment = null)
+    public Result CreateTravel(Travel travel, Payment payment = null)
     {
         if (Status is Closed || Status is Canceled)
             return Result.Failure(Errors.DomainErrors.BillStatus.BillClosed);
 
         _travels.Add(travel);
-
         if (payment != null)
             _payments.Add(payment);
 
@@ -168,7 +167,7 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         // برای هر کدام به صورت جداگانه تعیین می شود می توانند به ما بدهکار باشند )بالانس صورت حسابشان بیشتر ازصفر شود(.
         if (Customer.Rank == Credit)
         {
-            if ((Travels.Sum(x => x.Price.Value) - Payments.Sum(x => x.Price.Value)) > Customer.DebtLimit.Value)
+            if (!Customer.DebtLimit.IsCanUseDebt(Balance))
                 return Result.Failure(Errors.DomainErrors.Price.MustUseLessThanCreditLimit);
             //مجموع پرداخت های اسنادی این مشتریان هیچ گاه نباید از ۵۰ درصد کل مبلغ صورت حساب بیشترشود.
             var checkAmount = Payments.Where(x => x.PaymentType == PaymentType.Cheque).Sum(x => x.Price.Value);

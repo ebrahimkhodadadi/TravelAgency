@@ -23,7 +23,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Features\Travels\Commands\" />
 	  <Folder Include="Features\Travels\Events\" />
 	  <Folder Include="Features\Travels\Queries\" />
 	</ItemGroup>

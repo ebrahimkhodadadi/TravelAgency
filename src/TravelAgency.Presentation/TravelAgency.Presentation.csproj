@@ -30,6 +30,10 @@
 
   <ItemGroup>
     <Using Include="MediatR"/>
+    <Using Include="Microsoft.AspNetCore.Mvc"/>
+    <Using Include="TravelAgency.Presentation.Abstractions"/>
+    <Using Include="Microsoft.AspNetCore.Http.HttpResults"/>
+    <Using Include="Microsoft.AspNetCore.Http"/>
   </ItemGroup>
   
 </Project>

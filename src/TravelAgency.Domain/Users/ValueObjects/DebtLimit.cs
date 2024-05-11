@@ -1,9 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using TravelAgency.Domain.Billing.ValueObjects;
 using TravelAgency.Domain.Common.BaseTypes;
-using TravelAgency.Domain.Common.Results;
-using TravelAgency.Domain.Common.Utilities;
 using TravelAgency.Domain.Common.Errors;
-using static TravelAgency.Domain.Users.Errors.DomainErrors;
+using TravelAgency.Domain.Common.Results;
 using static TravelAgency.Domain.Common.Utilities.ListUtilities;
 
 namespace TravelAgency.Domain.Users.ValueObjects;
@@ -20,6 +18,14 @@ public sealed class DebtLimit : ValueObject
     {
         var errors = Validate(debtLimit);
         return errors.CreateValidationResult(() => new DebtLimit(debtLimit));
+    }
+
+    public bool IsCanUseDebt(Money price)
+    {
+        if(Value <= 0)
+            return false;
+
+        return price >= -Value;
     }
 
     public static IList<Error> Validate(int debtLimit)

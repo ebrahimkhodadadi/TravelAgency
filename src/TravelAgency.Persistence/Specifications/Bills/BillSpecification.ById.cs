@@ -14,6 +14,7 @@ internal class BillSpecification
             {
                 private static readonly FrozenSet<IncludeEntry<Bill>> _buildIncludesFrozen = IncludeBuilderOrchestrator<Bill>
                     .GetIncludeEntries(builder => builder
+                        .Include(orderHeader => orderHeader.Customer)
                         .Include(orderHeader => orderHeader.Payments)
                         .Include(orderHeader => orderHeader.Travels))
                     .ToFrozenSet();
