@@ -13,6 +13,10 @@ public static partial class DomainErrors
 
         public static readonly Error Invalid = Error.New(
             $"{nameof(PhoneNumber)}.{nameof(Invalid)}",
-            $"{nameof(PhoneNumber)} must consist of 9 digits and cannot start from zero.");
+            $"{nameof(PhoneNumber)} must consist of 11 digits.");
+
+        public static readonly Error PhoneNumberAlreadyTaken = Error.New(
+            $"{nameof(PhoneNumber)}.{nameof(PhoneNumberAlreadyTaken)}",
+            $"{nameof(PhoneNumber)} is already taken.");
     }
 }

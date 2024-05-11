@@ -12,7 +12,7 @@ namespace TravelAgency.Domain.Users.ValueObjects;
 
 public sealed class PhoneNumber : ValueObject
 {
-    private static readonly Regex _regex = new(@"^([1-9])[0-9]{8}$", Compiled | CultureInvariant | Singleline, TimeSpan.FromMilliseconds(100));
+    private static readonly Regex _regex = new(@"^(?:(?:(?:\\+?|00)(98))|(0))?((?:90|91|92|93|99)[0-9]{8})$", Compiled | CultureInvariant | Singleline, TimeSpan.FromMilliseconds(100));
     public new string Value { get; }
 
     private PhoneNumber(string value)

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TravelAgency.Application.Pipelines;
-using TravelAgency.Application;
-using TravelAgency.Application.Pipelines;
 using TravelAgency.Persistence.Pipelines;
 
 namespace TravelAgency.Persistence.Registration;
@@ -12,7 +10,7 @@ internal static class MediatorRegistration
     {
         services.AddMediatR(configuration =>
         {
-            configuration.RegisterServicesFromAssembly(AssemblyReference.Assembly);
+            configuration.RegisterServicesFromAssembly(TravelAgency.Application.AssemblyReference.Assembly);
             configuration.AddOpenBehavior(typeof(LoggingPipeline<,>));
             configuration.AddOpenBehavior(typeof(FluentValidationPipeline<,>));
             configuration.AddOpenBehavior(typeof(QueryTransactionPipeline<,>));

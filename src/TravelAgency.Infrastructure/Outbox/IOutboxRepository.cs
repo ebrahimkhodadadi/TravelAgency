@@ -2,7 +2,7 @@
 
 namespace TravelAgency.Infrastructure.Outbox;
 
-public interface IOutboxRepository
+public interface IOutboxRepository : IRepository
 {
     Task<OutboxMessage[]> GetOutboxMessagesAsync(CancellationToken cancellationToken);
 

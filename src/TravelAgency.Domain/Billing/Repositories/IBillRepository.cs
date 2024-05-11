@@ -1,6 +1,8 @@
-﻿namespace TravelAgency.Domain.Billing.Repositories;
+﻿using TravelAgency.Domain.Common.BaseTypes.Abstractions;
 
-public interface IBillRepository
+namespace TravelAgency.Domain.Billing.Repositories;
+
+public interface IBillRepository : IRepository
 {
     Task<Bill> GetByIdAsync(BillId id, CancellationToken cancellationToken = default);
 }

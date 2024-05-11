@@ -5,7 +5,7 @@ using TravelAgency.Persistence.Framework;
 using TravelAgency.Persistence.Specifications;
 using TravelAgency.Persistence.Specifications.Bills;
 
-namespace TravelAgency.Persistence.Registration
+namespace TravelAgency.Persistence.Repositories
 {
     public sealed class BillRepository(TravelAgencyDbContext dbContext) : IBillRepository
     {

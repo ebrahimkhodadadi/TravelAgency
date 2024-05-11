@@ -13,12 +13,11 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
         FirstName firstName,
         LastName lastName,
         Gender gender,
-        DateOnly? dateOfBirth,
         PhoneNumber contactNumber,
         Address? address,
-        User user,
+        //User user,
         Rank rank,
-        DebtLimit debtLimit
+        DebtLimit? debtLimit
     )
         : base(id)
     {
@@ -26,10 +25,9 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
         FirstName = firstName;
         LastName = lastName;
         Gender = gender;
-        DateOfBirth = dateOfBirth;
         PhoneNumber = contactNumber;
         Address = address;
-        User = user;
+        //User = user;
         DebtLimit = debtLimit;
     }
 
@@ -41,7 +39,7 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
     public LastName LastName { get; private set; }
     public Gender Gender { get; private set; }
     public Rank Rank { get; private set; }
-    public DebtLimit DebtLimit { get; private set; }
+    public DebtLimit? DebtLimit { get; private set; }
 
     public DateOnly? DateOfBirth { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
@@ -60,12 +58,11 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
         LastName lastName,
         Email email,
         Gender gender,
-        DateOnly? dateOfBirth,
         PhoneNumber contactNumber,
         Address? address,
-        User user,
+        //User user,
         Rank rank,
-        DebtLimit debtLimit
+        DebtLimit? debtLimit
     )
     {
         return new Customer
@@ -74,10 +71,9 @@ public sealed class Customer : Entity<CustomerId>, IAuditable
             firstName,
             lastName,
             gender,
-            dateOfBirth,
             contactNumber,
             address,
-            User.Create(UserId.New(), Username.Create(email.Value).Value, email),
+            //user,
             rank,
             debtLimit
         );
