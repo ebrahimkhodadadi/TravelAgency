@@ -38,6 +38,7 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         .HasColumnName(nameof(PaymentType))
         .HasColumnType(ColumnType.VarChar(LongestOf<PaymentType>()));
 
-        builder.Property(x => x.Description);
+        builder.Property(x => x.Description)
+            .IsRequired(false);
     }
 }

@@ -7,6 +7,9 @@ namespace TravelAgency.Domain.Billing.Services
         // تخفیف خوش حسابی
         public static Money CalculateGoodPayerDiscount(Dictionary<DateTime, Money> purchaseList, Money totalPurchases)
         {
+            if (purchaseList.Count < 30)
+                return 0;
+
             bool isGoodPayer = IsGoodPayer(purchaseList);
 
             Money goodPayerDiscount = 0;

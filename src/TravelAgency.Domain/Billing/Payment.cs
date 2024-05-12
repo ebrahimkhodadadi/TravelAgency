@@ -9,14 +9,16 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
 {
     public Money Price { get; private set; }
     public BillId BillId { get; private set; }
-    public PaymentId? TransferId { get; private set; }
     public PaymentType PaymentType { get; private set; }
-    public string Description { get; private set; }
+    public string? Description { get; private set; } = "";
 
     public DateTimeOffset CreatedOn { get; set; }
     public DateTimeOffset? UpdatedOn { get; set; }
     public string CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
+
+    public PaymentId? TransferId { get; private set; }
+    public Payment? Transfer { get; private set; }
 
     public Payment()
     {
@@ -29,7 +31,7 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
         Money price,
         PaymentType paymentType,
         BillId billId,
-        string description = null
+        string description = ""
         )
     : base(id)
     {

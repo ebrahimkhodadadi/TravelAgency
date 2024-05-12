@@ -48,5 +48,9 @@
 	  <ProjectReference Include="..\TravelAgency.Infrastructure\TravelAgency.Infrastructure.csproj" />
 	  <ProjectReference Include="..\TravelAgency.Infrastructure\TravelAgency.Infrastructure.csproj" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.EntityFrameworkCore"/>
+  </ItemGroup>
 	
 </Project>

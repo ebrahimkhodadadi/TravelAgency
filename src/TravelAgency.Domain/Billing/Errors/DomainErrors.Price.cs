@@ -12,20 +12,28 @@ namespace TravelAgency.Domain.Billing.Errors
 
             public static Error MustPayBeforeCreateTravel(Money price)
             {
-                return Error.New($"{nameof(BillStatus)}.{nameof(MustPayBeforeCreateTravel)}",
+                return Error.New($"{nameof(Price)}.{nameof(MustPayBeforeCreateTravel)}",
                     $"برای ثبت سفر ابتدا مبلغ سفر را پرداخت نمایید {price.ToString()}");
             }            
             
             public static readonly Error MustUseLessThanCreditLimit = 
-                Error.New($"{nameof(BillStatus)}.{nameof(MustUseLessThanCreditLimit)}",$"سفف استفاده از اعتبار به اتمام رسیده است");
+                Error.New($"{nameof(Price)}.{nameof(MustUseLessThanCreditLimit)}",$"سفف استفاده از اعتبار به اتمام رسیده است");
 
             public static readonly Error MustHaveLessThanSumCheque = 
-                Error.New($"{nameof(BillStatus)}.{nameof(MustHaveLessThanSumCheque)}",
+                Error.New($"{nameof(Price)}.{nameof(MustHaveLessThanSumCheque)}",
                     "مجموع پرداخت های اسنادی باید کمتر از 50 درصد کل مبلغ فاکتور باشد");           
             
             public static readonly Error MustNotEquelForCheque = 
-                Error.New($"{nameof(BillStatus)}.{nameof(MustNotEquelForCheque)}",
-                    "در پرداخت به صورت تهاتر یکی از مبلغ ها باید منفی مبلغ دیگر باشد");
+                Error.New($"{nameof(Price)}.{nameof(MustNotEquelForCheque)}",
+                    "در پرداخت به صورت تهاتر یکی از مبلغ ها باید منفی مبلغ دیگر باشد");  
+            
+            public static readonly Error PriceMustBeGraterThanZero = 
+                Error.New($"{nameof(Price)}.{nameof(PriceMustBeGraterThanZero)}",
+                    "مبلغ باید بیشتر از صفر باشد");  
+            
+            public static readonly Error NotEnoughBalance = 
+                Error.New($"{nameof(Price)}.{nameof(NotEnoughBalance)}",
+                    "بالانس صورت حساب برای انجام این تراکنش کافی نمیباشد");
 
         }
     }

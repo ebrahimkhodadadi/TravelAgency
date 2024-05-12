@@ -21,5 +21,23 @@ public sealed class PaymentController(ISender sender) : ApiController(sender)
         }
 
         return TypedResults.Ok(result.Value);
+    }    
+    
+    [HttpPost("Transfer")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<Results<Ok, ProblemHttpResult>> TransferPayment
+        (
+        [FromBody] TransferPaymentCommand command,
+        CancellationToken cancellationToken
+        )
+    {
+        var result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return TypedResults.Ok();
     }
 }

@@ -11,6 +11,7 @@ using TravelAgency.Domain.Common.Errors;
 using TravelAgency.Domain.Billing.ValueObjects;
 using TravelAgency.Domain.Billing.Services;
 using TravelAgency.Domain.Billing.Repositories;
+using System.ComponentModel.DataAnnotations;
 
 namespace TravelAgency.Domain.Billing;
 
@@ -199,26 +200,32 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         return Result.Success();
     }
 
-    private Result CreatePayment(Payment payment)
+    private Result<Payment> CreatePayment(Payment payment)
     {
         if (Status is Closed || Status is Canceled)
-            return Result.Failure(Errors.DomainErrors.BillStatus.BillClosed);
+            return Result.Failure<Payment>(Errors.DomainErrors.BillStatus.BillClosed);
 
         _payments.Add(payment);
-        return Result.Success();
+        return Result.Success(payment);
     }
 
-    public async Task<Result> TransferPayment(Payment from, Payment to, IBillRepository _billRepository)
+    public async Task<Result> TransferPayment(Money price, BillId to, IBillRepository _billRepository)
     {
-        if (-from.Price.Value != to.Price.Value && -to.Price.Value != from.Price.Value)
-            return Result.Failure(Errors.DomainErrors.Price.MustNotEquelForCheque);
+        if((Balance - price) < 0)
+            return Result.Failure(Errors.DomainErrors.Price.NotEnoughBalance);
 
-        from.SetTransferId(to.Id);
-        to.SetTransferId(from.Id);
+        var transferOldPay = CreatePayment(Payment.Create(PaymentId.New(), -price.Value, PaymentType.Transfer, Id)).Value;
+        var transferNewPay = CreatePayment(Payment.Create(PaymentId.New(), price.Value, PaymentType.Transfer, to)).Value;
 
-        _payments.Add(from);
-        var toBill = await _billRepository.GetByIdAsync(to.BillId);
-        var result = toBill.CreatePayment(to);
+        transferNewPay.SetTransferId(transferOldPay.Id);
+        transferOldPay.SetTransferId(transferNewPay.Id);
+
+        _payments.Add(transferOldPay);
+        var toBill = await _billRepository.GetByIdAsync(transferNewPay.BillId);
+        if(toBill is null)
+            return Result.Failure(Error.NotFound<Bill>(transferNewPay.BillId));
+
+        var result = toBill.CreatePayment(transferNewPay);
         if (result.IsFailure)
             return result;
 
