@@ -15,7 +15,7 @@ internal sealed class CloseBillCommandHandler(IBillRepository billRepository, IV
     public async Task<IResult> Handle(CloseBillCommand command, CancellationToken cancellationToken)
     {
         var billId = BillId.Create(command.billId);
-        var bill = await _billRepository.GetByIdAsync(billId);
+        var bill = await _billRepository.GetByIdAsync(billId, cancellationToken);
         _validator
             .If(bill is null, Error.NotFound<Bill>(billId));
         if (_validator.IsInvalid)

@@ -40,4 +40,22 @@ public sealed class PaymentController(ISender sender) : ApiController(sender)
 
         return TypedResults.Ok();
     }
+
+    [HttpDelete]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<Results<Ok, ProblemHttpResult>> DeletePayment
+    (
+    Ulid Id,
+    CancellationToken cancellationToken
+    )
+    {
+        var result = await Sender.Send(new DeletePaymentCommand(Id), cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return TypedResults.Ok();
+    }
 }

@@ -18,7 +18,6 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
     public string? UpdatedBy { get; set; }
 
     public PaymentId? TransferId { get; private set; }
-    public Payment? Transfer { get; private set; }
 
     public Payment()
     {

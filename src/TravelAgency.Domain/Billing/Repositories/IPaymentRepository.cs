@@ -7,4 +7,5 @@ public interface IPaymentRepository : IRepository
     Task<Payment> GetByIdAsync(PaymentId id, CancellationToken cancellationToken = default);
 
     void Add(Payment payment);
+    void Remove(Payment payment);
 }

@@ -24,4 +24,9 @@ public sealed class PaymentRepository(TravelAgencyDbContext dbContext) : IPaymen
     _dbContext
         .Set<Payment>()
         .Add(payment);
+
+    public void Remove(Payment payment) =>
+        _dbContext
+        .Set<Payment>()
+        .Remove(payment);
 }

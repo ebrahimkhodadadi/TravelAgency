@@ -17,7 +17,7 @@ internal sealed class CreatePaymentCommandHandler(IPaymentRepository paymentRepo
     public async Task<IResult<CreatePaymentResponse>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
     {
         var billId = BillId.Create(command.billId);
-        var bill = await _billRepository.GetByIdAsync(billId);
+        var bill = await _billRepository.GetByIdAsync(billId, cancellationToken);
         _validator
             .If(bill is null, Error.NotFound<Bill>(billId));
         if (_validator.IsInvalid)
