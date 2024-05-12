@@ -29,7 +29,7 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
     public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
     private readonly List<DiscountLog> _discounts = [];
-    public IReadOnlyCollection<DiscountLog> Discounts => _discounts.AsReadOnly();
+    public IReadOnlyCollection<DiscountLog> DiscountLogs => _discounts.AsReadOnly();
 
     public CustomerId CustomerId { get; private set; }
     public Customer Customer { get; private set; }
@@ -75,24 +75,39 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
     }
 
     // پرداخت
-    public Result Pay(Money price)
+    public Result<Payment> Pay(Money price, PaymentType paymentType)
     {
         if (Status is Closed || Status is Canceled)
-            return Result.Failure(Errors.DomainErrors.BillStatus.BillClosed);
+            return Result.Failure<Payment>(Errors.DomainErrors.BillStatus.BillClosed);
+        if(Customer.Rank is Cash && paymentType is PaymentType.Cheque)
+            return Result.Failure<Payment>(Errors.DomainErrors.PaymentStatus.CashCustomer);
 
-        var fee = CreditService.CalculateCreditUsageFee(Customer.Rank,
-            CalculateDailyBalance(DateTime.Now.AddDays(-10), DateTime.Now).Item3);
-
-        var dailyBalance = CalculateDailyBalance(DateTime.Now.AddDays(-30), DateTime.Now);
-        var discount = DiscountService.CalculateGoodPayerDiscount(dailyBalance.Item1, dailyBalance.Item2);
-        if (discount.IsValueZero())
-            _discounts.Add(DiscountLog.Create(Id, discount));
-
+        var fee = CalculateFee();
+        var discount = CalculateDiscount();
         var totalPrice = price + fee - discount;
 
-        _payments.Add(Payment.Create(totalPrice, Id, "پرداخت"));
+        var payment = Payment.Create(PaymentId.New(), totalPrice, paymentType, Id, "پرداخت");
+        _payments.Add(payment);
 
-        return Result.Success();
+        return Result.Success(payment);
+    }
+    private Money CalculateFee()
+    {
+        var dailyBalanceFee = CalculateDailyBalance(DateTime.Now.AddDays(-10), DateTime.Now);
+        return CreditService.CalculateCreditUsageFee(Customer.Rank, dailyBalanceFee.Item1, dailyBalanceFee.Item3);
+    }
+    private Money CalculateDiscount()
+    {
+        Money discount = 0;
+        if (!_discounts.Any(x => x.CreatedOn > DateTime.Now.AddDays(-30)))
+        {
+            var dailyBalanceDiscount = CalculateDailyBalance(DateTime.Now.AddDays(-30), DateTime.Now);
+            discount = DiscountService.CalculateGoodPayerDiscount(dailyBalanceDiscount.Item1, dailyBalanceDiscount.Item2);
+            if (!discount.IsValueZero())
+                _discounts.Add(DiscountLog.Create(Id, discount));
+        }
+
+        return discount;
     }
 
     // محاسبه بالانس روزانه
@@ -110,7 +125,7 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         Dictionary<DateTime, Money> dailyBalances = new Dictionary<DateTime, Money>();
         foreach (Payment transaction in transactions)
         {
-            DateTime transactionDate = transaction.CreatedOn.DateTime;
+            DateTime transactionDate = transaction.CreatedOn.DateTime.Date;
             Money dailyBalance = transaction.Price;
 
             if (dailyBalances.ContainsKey(transactionDate))
@@ -124,14 +139,21 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         }
         foreach (Travel travel in travels)
         {
-            DateTime transactionDate = travel.CreatedOn.DateTime;
+            DateTime transactionDate = travel.CreatedOn.DateTime.Date;
             Money dailyBalance = travel.Price;
 
-            dailyBalances[transactionDate] -= dailyBalance;
+            if (dailyBalances.ContainsKey(transactionDate))
+            {
+                dailyBalances[transactionDate] -= dailyBalance;
+            }
+            else
+            {
+                dailyBalances[transactionDate] = -dailyBalance.Value;
+            }
         }
 
         Money totalBalance = dailyBalances.Sum(kv => kv.Value.Value);
-        int numberOfDays = (int)(billEndDate - billStartDate).TotalDays + 1;
+        int numberOfDays = dailyBalances.Keys.Count();
         Money averageDailyBalance = totalBalance / numberOfDays;
 
         return (dailyBalances, totalBalance, averageDailyBalance);
@@ -150,14 +172,12 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         return Result.Success();
     }
 
-    public Result CreateTravel(Travel travel, Payment payment = null)
+    public Result CreateTravel(Travel travel)
     {
         if (Status is Closed || Status is Canceled)
             return Result.Failure(Errors.DomainErrors.BillStatus.BillClosed);
 
         _travels.Add(travel);
-        if (payment != null)
-            _payments.Add(payment);
 
         //مشتری های نقدی اجازه ثبت پرداخت اسنادی را ندارند و هیچ گاه نباید بالانس صورت حساب آنان )
         //مجموع سفرها منهای مجموع پرداخت ها( بیشتر از صفر شود )یعنی هیچ وقت نباید به ما بدهکار باشند
@@ -179,7 +199,7 @@ public sealed class Bill : AggregateRoot<BillId>, IAuditable, ISoftDeletable
         return Result.Success();
     }
 
-    public Result CreatePayment(Payment payment)
+    private Result CreatePayment(Payment payment)
     {
         if (Status is Closed || Status is Canceled)
             return Result.Failure(Errors.DomainErrors.BillStatus.BillClosed);

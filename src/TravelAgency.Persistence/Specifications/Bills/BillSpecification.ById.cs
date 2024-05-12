@@ -16,7 +16,8 @@ internal class BillSpecification
                     .GetIncludeEntries(builder => builder
                         .Include(orderHeader => orderHeader.Customer)
                         .Include(orderHeader => orderHeader.Payments)
-                        .Include(orderHeader => orderHeader.Travels))
+                        .Include(orderHeader => orderHeader.Travels)
+                        .Include(orderHeader => orderHeader.DiscountLogs))
                     .ToFrozenSet();
 
                 internal static Specification<Bill, BillId> Create(BillId billId)

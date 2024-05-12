@@ -1,6 +1,6 @@
-﻿namespace TravelAgency.Application.Features.Bills.Commands.Create;
+﻿namespace TravelAgency.Application.Features.Travels.Commands.Create;
 
-public sealed record CreateTravelResponse
+public sealed record CancelTravelResponse
 (
     Ulid Id
 ) : IResponse;

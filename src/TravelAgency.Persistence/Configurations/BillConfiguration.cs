@@ -45,7 +45,7 @@ internal sealed class BillConfiguration : IEntityTypeConfiguration<Bill>
             .WithOne()
             .HasForeignKey(payment => payment.BillId);     
         
-        builder.HasMany(p => p.Discounts)
+        builder.HasMany(p => p.DiscountLogs)
             .WithOne()
             .HasForeignKey(discountLog => discountLog.BillId);    
         

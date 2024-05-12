@@ -22,7 +22,7 @@ namespace TravelAgency.Domain.Billing.Services
         {
             foreach (var avg in purchaseList)
             {
-                if (avg.Value.IsValueZero())
+                if (avg.Value.Value < 0)
                 {
                     return false;
                 }

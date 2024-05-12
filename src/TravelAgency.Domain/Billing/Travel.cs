@@ -8,6 +8,7 @@ using static TravelAgency.Domain.Billing.Enumerations.TravelStatus;
 using static TravelAgency.Domain.Billing.Enumerations.TravelType;
 using static TravelAgency.Domain.Common.Utilities.ListUtilities;
 using TravelAgency.Domain.Common.Errors;
+using TravelAgency.Domain.Billing.Repositories;
 
 namespace TravelAgency.Domain.Billing;
 
@@ -24,9 +25,6 @@ public sealed class Travel : Entity<TravelId>, IAuditable
     public DateTimeOffset? UpdatedOn { get; set; }
     public string CreatedBy { get; set; }
     public string? UpdatedBy { get; set; }
-
-    private readonly List<Payment> _payments = [];
-    public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
     private Travel()
     {
@@ -60,7 +58,7 @@ public sealed class Travel : Entity<TravelId>, IAuditable
         );
     }
 
-    public Result Cancel()
+    public Result Cancel(IPaymentRepository paymentRepository)
     {
         var errors = EmptyList<Error>()
             .If(Status is Canceled, Error.InvalidOperation("سفر از قبل کنسل شده است"));
@@ -70,8 +68,9 @@ public sealed class Travel : Entity<TravelId>, IAuditable
         var fee = CalculateCancellationFee(Type, Start, Price);
         if (fee.IsFailure)
             return fee;
-        _payments.Add(Payment.Create(-fee.Value.Value, BillId, "جریمه کنسلی"));
+        paymentRepository.Add(Payment.Create(PaymentId.New(), -fee.Value.Value, PaymentType.Cash, BillId, "جریمه کنسلی"));
 
+        ChangeStatus(TravelStatus.Canceled);
         return Result.Success();
     }
     // جریمه کنسلی
@@ -111,4 +110,7 @@ public sealed class Travel : Entity<TravelId>, IAuditable
         Money cancellationFee = (int)Math.Round(cancellationFeePercentage * travelPrice.Value);
         return Result.Success(cancellationFee);
     }
+
+    private void ChangeStatus(TravelStatus status) =>
+        Status = status;
 }

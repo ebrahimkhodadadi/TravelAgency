@@ -76,13 +76,13 @@ public sealed class UnitOfWork<TContext>
         {
             if (entityEntry.State is Added)
             {
-                entityEntry.Property(a => a.CreatedOn).CurrentValue = DateTimeOffset.UtcNow;
+                entityEntry.Property(a => a.CreatedOn).CurrentValue = DateTimeOffset.Now;
                 entityEntry.Property(a => a.CreatedBy).CurrentValue ??= _userContext.Username ?? DefaultUsername;
             }
 
             if (entityEntry.State is Modified)
             {
-                entityEntry.Property(a => a.UpdatedOn).CurrentValue = DateTimeOffset.UtcNow;
+                entityEntry.Property(a => a.UpdatedOn).CurrentValue = DateTimeOffset.Now;
                 entityEntry.Property(a => a.UpdatedBy).CurrentValue = _userContext.Username ?? DefaultUsername;
             }
         }

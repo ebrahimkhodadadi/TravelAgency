@@ -3,10 +3,10 @@ using TravelAgency.Domain.Billing;
 
 namespace TravelAgency.Application.Mappings;
 
-public static class TravelMapping
+public static class BillMapping
 {
-    public static CreateTravelResponse ToCreateResponse(this Travel travel)
+    public static CreateBillResponse ToCreateResponse(this Bill bill)
     {
-        return new CreateTravelResponse(travel.Id.Value);
+        return new CreateBillResponse(bill.Id.Value);
     }
 }

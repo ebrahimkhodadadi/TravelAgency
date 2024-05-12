@@ -19,7 +19,7 @@ public sealed class BillRepository(TravelAgencyDbContext dbContext) : IBillRepos
         return await _dbContext
             .Set<Bill>()
             .UseSpecification(specification)
-            .FirstAsync(cancellationToken);
+            .SingleOrDefaultAsync(cancellationToken);
     }
 
     public void Add(Bill bill) =>

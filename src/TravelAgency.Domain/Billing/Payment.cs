@@ -27,6 +27,7 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
         (
         PaymentId id,
         Money price,
+        PaymentType paymentType,
         BillId billId,
         string description = null
         )
@@ -34,16 +35,18 @@ public sealed class Payment : Entity<PaymentId>, IAuditable
     {
         Price = price;
         BillId = billId;
+        PaymentType = paymentType;
         Description = description;
     }
 
-    public static Payment Create(Money price, BillId billId, string description = null)
+    public static Payment Create(PaymentId id, Money price, PaymentType paymentType, BillId billId, string description = null)
     {
         return new Payment
         (
-            id: PaymentId.New(),
+            id: id,
             price: price,
             billId: billId,
+            paymentType: paymentType,
             description: description
         );
     }

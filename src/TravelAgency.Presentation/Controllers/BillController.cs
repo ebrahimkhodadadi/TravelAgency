@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using TravelAgency.Application.Features.Bills.Commands.ChangeStatus;
 using TravelAgency.Application.Features.Bills.Commands.Create;
-using TravelAgency.Presentation.Abstractions;
 
 namespace TravelAgency.Presentation.Controllers;
 
@@ -25,5 +22,23 @@ public sealed class BillController(ISender sender) : ApiController(sender)
         }
 
         return TypedResults.Ok(result.Value);
+    }   
+    
+    [HttpPut("Close")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<Results<Ok, ProblemHttpResult>> CloseBill
+        (
+        Ulid Id,
+        CancellationToken cancellationToken
+        )
+    {
+        var result = await Sender.Send(new CloseBillCommand(Id), cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return TypedResults.Ok();
     }
 }
